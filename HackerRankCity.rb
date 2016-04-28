@@ -47,31 +47,36 @@ class Tree
 #numhs = copies of H-shaped current tree in the whole tree
 #Nsteps = input from user of number of tree construction steps, where each N step results in 1 tree having 
 # four H-shaped current tree copies, 2 connector nodes and five connector edges
-	def calcedgesum(nsteps,numhs)
+	
 # total number of connector nodes = 2 for every step N, i.e. every four trees prior to connection of
 # a second N step of tree construction bringing four more "H"s.
-		if nsteps > 1
-			treeconnectors = Nsteps - 1 
-		else
-			treeconnectors = 0
-		end 	
+	def treeedgesum(nsteps,numhs,aih,aic)
 		
-# for one H-shaped current tree, unconnected to any other copies...
-# distance between node u and node v is...
+		nodeposition = [1,2,3,4,5,6]
+		@edgesum = 0
+		# node distance within a tree
+		@aih = aih
+		# node-to-node distance within the connector 'H'
+		@aic = aic
+		@duv = 0
+		# horiz node-to-node distance, can be =aih or aic
+		@valht = aih
+		@valhc = aic
+		# vertical node-to-node distance, can be =aih or aic
+		@valvt = aih
+		@valvc = aic
+		# for one H-shaped current tree, unconnected to any other copies...
+		# distance between node u and node v is...
 		 # e..g distance d(1,3) = 2 * |-1| = 2
 		# (u-v) is num. of edges in shortest distance b/w the nodes u and v
 		# aih is edge length between nodes in the current tree as inputted by the user
 
 		# edgesum = sum of d(u,v)s for all possible combos of nodes
-		nodeposition = [1,2,3,4,5,6]
-		@edgesum = 0
-		@aih = 1
-		@aic = 1
-		@duv = 0
-		@valh = @aic
-		@valv = @aih
+		
+		# calculating sum of node distances within an H-shape
 		nodeposition.each do |u|
 			nodeposition.each do |v|
+				# need u to not equal v and v to be greater than u so that node distances aren't counted twice 
 				if v > u
 					
 					# odd nodes are on left, even on right so any transition from one to the other
@@ -83,25 +88,27 @@ class Tree
 					# combo of horiz and vertical moves (U shaped path or chair-shaped path)
 					# u shaped path
 					if (u == 1 and v == 2) or (u == 5 and v == 6)
-						@duv = 3 #(@valh + 2 * @valv) 
+						@duv =  (@valh + 2 * @valv) 
 						@edgesum = @edgesum + @duv 
 					
 					# chair-shaped path
 					elsif (u == 1 and v == 6) or (u == 2 and v == 5) 
-						@duv = 3 #(@valh + 2 * @valv) 
+						@duv = (@valh + 2 * @valv) 
 						@edgesum = @edgesum + @duv 
 					
-
 					# horiz. or vert. move only
-					else
-						@duv = @aih * (u - v).abs
+					elsif (u % 2 != 0 and v % 2 != 0) or (u % 2 == 0 and v % 2 == 0) or (u == 3 and v == 4)
+						@duv = (u - v).abs
 						@edgesum = @edgesum + @duv
 					end
 			
 				end
 			end
 		end
-		return @edgesum
+		
+		@finaledgesum = @edgesum + (nsteps - 1) * (4 * @valvc + @valhc)
+
+		return @finaledgesum	
 	end
 
 
@@ -123,11 +130,10 @@ numtrees = gets.strip.to_i
 totalHs = numtrees * 4
 puts "What is the tree node length?"
 aih = gets.strip.to_i
-puts '*******'
-aih = currenttree.edgelength
-# aic = currenttree.connectoredgelength
+puts "What is the connector node length?"
+aic = gets.strip.to_i
 
-answer = currenttree.calcedgesum(numtrees,totalHs)
+answer = currenttree.treeedgesum(numtrees,totalHs,aih,aic)
 puts "The sum of the distances between nodes in the tree at N=#{numtrees} is #{answer}."
 
 
