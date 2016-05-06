@@ -1,6 +1,6 @@
 public
 
-
+#sample array given
 arr = [[1,1,1,0,0,0],[0,1,0,0,0,0],[1,1,1,0,0,0],[0,0,2,4,4,0],[0,0,0,2,0,0],[0,0,1,2,4,0]]
 # arr = Array.new(6)
 # for arr_i in (0..6-1)
@@ -31,6 +31,8 @@ def hourglass(array)
 							sumbottom = array[i+1][j-1] + array[i+1][j] + array[i+1][j+1]
 							sum = sumtop + x + sumbottom
 							puts "i = #{i}, j= #{j}, x=#{x}, sumtop=#{sumtop}, sumbottom=#{sumbottom}, sum=#{sum}"					
+							#resultarray format is: each row is an array of [hourglass sum, neckrow, neckcol]
+
 							@resultarr.push(sum).push(i).push(j)
 						end
 					end
@@ -48,7 +50,7 @@ def maxhoursum(sumposarray)
 		end
 	
 	end
-	puts @sums.to_s
+
 	@sums.each_index do |s|
 		if s > 1 and
 			if @sums[s] > @sums[s - 1] or @sums[s + 1] > @sums[s - 1]
@@ -66,51 +68,6 @@ def maxhoursum(sumposarray)
 	end
 end
 
-#resultarray format is: each row is an array of [hourglass sum, neckrow, neckcol]
 resultarray = hourglass(arr)
 answer = maxhoursum(resultarray)
 puts answer
-# sumhour = sum_hourglass(hoursumarray)
-# puts sumhour
-
-
-# Output Format
-
-# Print the largest (maximum) hourglass sum found in A.
-
-# Sample Input
-
-# 1 1 1 0 0 0
-# 0 1 0 0 0 0
-# 1 1 1 0 0 0
-# 0 0 2 4 4 0
-# 0 0 0 2 0 0
-# 0 0 1 2 4 0
-# Sample Output
-
-# 19
-# Explanation
-
-# A contains the following hourglasses:
-
-# 1 1 1   1 1 0   1 0 0   0 0 0
-#   1       0       0       0
-# 1 1 1   1 1 0   1 0 0   0 0 0
-
-# 0 1 0   1 0 0   0 0 0   0 0 0
-#   1       1       0       0
-# 0 0 2   0 2 4   2 4 4   4 4 0
-
-# 1 1 1   1 1 0   1 0 0   0 0 0
-#   0       2       4       4
-# 0 0 0   0 0 2   0 2 0   2 0 0
-
-# 0 0 2   0 2 4   2 4 4   4 4 0
-#   0       0       2       0
-# 0 0 1   0 1 2   1 2 4   2 4 0
-
-# The hourglass with the maximum sum (19) is:
-
-# 2 4 4
-#   2
-# 1 2 4
