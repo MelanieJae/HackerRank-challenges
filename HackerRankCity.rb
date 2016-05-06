@@ -24,6 +24,9 @@
 
 # Print the sum of distances between each pair of nodes modulo 10000000071000000007.
 
+# N step=1 only current tree is created, finaledgesum is 29
+# N step=2 current tree + 3 copies + 1 connector (2 nodes and 5 edges)
+
 # Sample Input 0
 
 # 1
@@ -50,8 +53,11 @@ class Tree
 	
 # total number of connector nodes = 2 for every step N, i.e. every four trees prior to connection of
 # a second N step of tree construction bringing four more "H"s.
-	def treeedgesum(nsteps,numhs,aih,aic)
-		
+	def treeedgesum(nsteps,aih,aic)
+		puts '****'
+		puts aih
+		puts aic
+		puts "****"
 		nodeposition = [1,2,3,4,5,6]
 		@edgesum = 0
 		# node distance within a tree
@@ -88,12 +94,12 @@ class Tree
 					# combo of horiz and vertical moves (U shaped path or chair-shaped path)
 					# u shaped path
 					if (u == 1 and v == 2) or (u == 5 and v == 6)
-						@duv =  (@valh + 2 * @valv) 
+						@duv =  (@valht + 2 * @valvt)  
 						@edgesum = @edgesum + @duv 
 					
 					# chair-shaped path
 					elsif (u == 1 and v == 6) or (u == 2 and v == 5) 
-						@duv = (@valh + 2 * @valv) 
+						@duv = (@valht + 2 * @valvt) 
 						@edgesum = @edgesum + @duv 
 					
 					# horiz. or vert. move only
@@ -102,11 +108,14 @@ class Tree
 						@edgesum = @edgesum + @duv
 					end
 			
+			
 				end
 			end
 		end
-		
-		@finaledgesum = @edgesum + (nsteps - 1) * (4 * @valvc + @valhc)
+		if nsteps > 1
+
+		# adding connector node-to-node distance sum to get the final answer outputted to the user 
+		@finaledgesum = ((@edgesum) + (nsteps - 1) * (4 * @valvc + @valhc)) % 1000000007
 
 		return @finaledgesum	
 	end
@@ -125,15 +134,14 @@ end
 #A(i) H/h is the edge length on the current tree, i.e. one of the four H shaped tree copies
 # that form the larger tree.
 currenttree = Tree.new()
-puts "How many trees are being created? (Note 1 tree created = 4 copies of current tree)"
-numtrees = gets.strip.to_i
-totalHs = numtrees * 4
+puts "What step of construction is this?\n (Note: step 1 is one current tree created, step 2 is currenttree + 3 copies of it + 1 connector (2 nodes, 5 edges), etc...)"
+nsteps = gets.strip.to_i
 puts "What is the tree node length?"
 aih = gets.strip.to_i
 puts "What is the connector node length?"
 aic = gets.strip.to_i
 
-answer = currenttree.treeedgesum(numtrees,totalHs,aih,aic)
-puts "The sum of the distances between nodes in the tree at N=#{numtrees} is #{answer}."
+answer = currenttree.treeedgesum(nsteps,aih,aic)
+puts "The sum of the distances between nodes in the tree at N=#{nsteps} is #{answer}."
 
 
